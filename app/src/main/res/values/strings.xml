@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">TEDANews</string>
+    <!-- Tab pages title text -->
+    <string name="tech_news_title" translatable="true">tech</string>
+    <string name="science_news_title" translatable="true">science</string>
+    <string name="travel_news_title" translatable="true">travel</string>
+    <string name="books_news_title" translatable="true">books</string>
+
+    <string name="add_widget">Add widget</string>
+    <string name="sample_news_story_1">China presses the internet censorship efforts</string>
+    <string name="sample_news_story_2">Facebook lets ads bare a man\'\s chest</string>
+    <string name="sample_news_story_3">Bit by bit, whole foods gets an Amazon touch</string>
+    <string name="title_activity_category">CategoryActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>
