@@ -1,16 +1,18 @@
 package com.swiftsynq.tedanews.Activity;
 
 import android.os.Bundle;
+import android.os.RecoverySystem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Toast;
 
 import com.swiftsynq.tedanews.Adapter.NewsCategoryAdapter;
 import com.swiftsynq.tedanews.Event.ErrorEvent;
-import com.swiftsynq.tedanews.Event.ServerEvent;
+import com.swiftsynq.tedanews.Event.NewsServerEvent;
 import com.swiftsynq.tedanews.Infrastructure.Communicator;
 import com.swiftsynq.tedanews.Model.Articles;
 import com.swiftsynq.tedanews.Model.News;
@@ -21,6 +23,8 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity {
@@ -29,6 +33,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
@@ -57,7 +62,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onServerEvent(ServerEvent event) {
+    public void onServerEvent(NewsServerEvent event) {
 
 
         if (event.getServerResponse().getArticlesResponse()!=null) {

@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.squareup.otto.Produce;
 import com.swiftsynq.tedanews.BuildConfig;
+import com.swiftsynq.tedanews.Event.SourcesServerEvent;
 import com.swiftsynq.tedanews.Interface.ApiNews;
 import com.swiftsynq.tedanews.Model.News;
 import com.swiftsynq.tedanews.Event.ErrorEvent;
-import com.swiftsynq.tedanews.Event.ServerEvent;
+import com.swiftsynq.tedanews.Event.NewsServerEvent;
+import com.swiftsynq.tedanews.Model.NewsSources;
 import com.swiftsynq.tedanews.Utils.Constant;
 
 import okhttp3.OkHttpClient;
@@ -51,7 +53,7 @@ public class Communicator {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
 
-                BusProvider.getInstance().post(new ServerEvent(response.body()));
+                BusProvider.getInstance().post(new NewsServerEvent(response.body()));
 
                 Log.e(TAG, "Success");
 
@@ -66,10 +68,53 @@ public class Communicator {
             }
         });
     }
+    public void getAllNewsSources() {
 
+        //Here a logging interceptor is created
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        //The logging interceptor will be added to the http client
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(logging);
+
+        //The Retrofit builder will have the client attached, in order to get connection logs
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(httpClient.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(Constant.BASE_URL)
+                .build();
+        ApiNews service = retrofit.create(ApiNews.class);
+
+        Call<NewsSources> call = service.getAllNewsSources(BuildConfig.API_KEY);
+
+        call.enqueue(new Callback<NewsSources>() {
+
+            @Override
+            public void onResponse(Call<NewsSources> call, Response<NewsSources> response) {
+
+                BusProvider.getInstance().post(new SourcesServerEvent(response.body()));
+
+                Log.e(TAG, "Success");
+
+            }
+
+            @Override
+            public void onFailure(Call<NewsSources> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BusProvider.getInstance().post(produceErrorEvent(-4, "!You are not connected to the Internet."));
+
+                Log.e(TAG, "Failure"+t.getMessage());
+            }
+        });
+    }
+    @Produce
+    public SourcesServerEvent produceServerEvent(NewsSources serverResponse) {
+        return new SourcesServerEvent(serverResponse);
+    }
    @Produce
-   public ServerEvent produceServerEvent(News serverResponse) {
-       return new ServerEvent(serverResponse);
+   public NewsServerEvent produceServerEvent(News serverResponse) {
+       return new NewsServerEvent(serverResponse);
    }
 
     @Produce

@@ -15,5 +15,14 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="action_settings">Settings</string>
+    <string name="businesscategory">business</string>
+    <string name="generalcategory">general</string>
+    <string name="healthcategory">health</string>
+    <string name="sciencecategory">science</string>
+    <string name="entertainmentcategory">entertainment</string>
+    <string name="sportscategory">sports</string>
+    <string name="technologycategory">technology</string>
+    <string name="source_description">Australia\'s most trusted source of local, national and world news. Comprehensive, independent, in-depth analysis, the latest business, sport, weather and more.</string>
+    <string name="source_title">ABC News (AU)</string>
     <string name="section_format">Hello World from section: %1$d</string>
 </resources>
