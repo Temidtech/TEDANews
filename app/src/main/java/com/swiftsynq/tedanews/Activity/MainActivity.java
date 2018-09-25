@@ -56,32 +56,8 @@ public class MainActivity extends BaseActivity {
 
         // Set the adapter onto the view pager
         viewPager.setAdapter(adapter);
-        new Communicator().getTopHeadlines("us");
-        Timber.d("Start getting news data");
 
     }
 
-    @Subscribe
-    public void onServerEvent(NewsServerEvent event) {
 
-
-        if (event.getServerResponse().getArticlesResponse()!=null) {
-            News news=event.getServerResponse();
-            if(news.getStatusResponse().equals("ok")) {
-                List<Articles> result=news.getArticlesResponse();
-                Toast.makeText(this,String.valueOf(result.size()),Toast.LENGTH_LONG).show();
-            }
-
-            Timber.d("Received News data.");
-
-        } else {
-            Timber.d("Canceled getting News data.");
-        }
-    }
-    @Subscribe
-    public void onErrorEvent(ErrorEvent errorEvent){
-
-        Toast.makeText(this,errorEvent.getErrorMsg(),Toast.LENGTH_LONG).show();
-
-    }
 }

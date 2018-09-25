@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         app:tabGravity="fill"
         app:tabIndicatorColor="@android:color/white"
-        app:tabMode="fixed"
+        app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/colorPrimaryDark"/>
 
     <!-- ViewPager for news fragments -->

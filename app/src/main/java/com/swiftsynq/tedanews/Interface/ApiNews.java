@@ -15,6 +15,9 @@ public interface ApiNews {
     @GET("top-headlines/")
     Call<News> getTopHeadlines(@Query("country") String country,
                           @Query("apikey") String apikey);
+    @GET("everything/")
+    Call<News> getEveryThingsNews(@Query("sortBy") String sortBy,@Query("q") String q,@Query("pageSize") int pageSize,@Query("language") String language,
+                               @Query("apikey") String apikey);
     @GET("sources/")
     Call<NewsSources> getAllNewsSources(@Query("apikey") String apikey);
 }
