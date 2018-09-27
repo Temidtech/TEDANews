@@ -8,11 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,26 +20,20 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 import com.swiftsynq.tedanews.Adapter.NewsAdapter;
-import com.swiftsynq.tedanews.Adapter.NewsSourcesAdapter;
 import com.swiftsynq.tedanews.Base.BaseFragment;
 import com.swiftsynq.tedanews.Event.ErrorEvent;
+import com.swiftsynq.tedanews.Event.HeadlinesServerEvent;
 import com.swiftsynq.tedanews.Event.NewsServerEvent;
-import com.swiftsynq.tedanews.Event.SourcesServerEvent;
 import com.swiftsynq.tedanews.Infrastructure.Communicator;
 import com.swiftsynq.tedanews.Model.Articles;
 import com.swiftsynq.tedanews.Model.News;
-import com.swiftsynq.tedanews.Model.NewsSources;
-import com.swiftsynq.tedanews.Model.Sources;
 import com.swiftsynq.tedanews.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
 
-import static com.swiftsynq.tedanews.Adapter.NewsSourcesAdapter.SPAN_COUNT_ONE;
-
-public class TopStoriesFragment
+public class TopHeadlinesFragment
 		extends BaseFragment {
 
 	/** Adapter that holds the list of top stories */
@@ -52,33 +42,22 @@ public class TopStoriesFragment
 	/** Loader ID */
 	private static final int LOADER_ID = 1;
 
-	/** News category (fragment initiating parameter) */
-	private String newsCategory;
 
     RecyclerView recyclerView;
 
 	/** Indeterminate progress bar */
 	private ProgressBar progressSpinner;
 
-	/** String key for news category */
-	private static final String NEWS_CATEGORY = "CATEGORY";
 
-	public TopStoriesFragment() {
+	public TopHeadlinesFragment() {
 		// Required empty public constructor
 	}
 
 	/** Factory method to pass arguments when recreating fragments */
-	public static TopStoriesFragment newInstance(String newsCategory) {
+	public static TopHeadlinesFragment newInstance() {
 		// Base fragment to reuse
-		TopStoriesFragment fragment = new TopStoriesFragment();
-		// Initialize bundle to store arguments
-		Bundle bundle = new Bundle(1);
+		TopHeadlinesFragment fragment = new TopHeadlinesFragment();
 
-		// String url parameter to pass arguments when recreating {@link TopStoriesFragment}
-		bundle.putString(NEWS_CATEGORY, newsCategory);
-
-		// Save arguments to the fragment instance to be called upon later
-		fragment.setArguments(bundle);
 		// Create and return {@link TopStoriesFragment} with the passed-in string parameter
 		return fragment;
 	}
@@ -86,11 +65,6 @@ public class TopStoriesFragment
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Get the passed-in argument from the fragment
-		if (getArguments() != null) {
-			newsCategory = getArguments().getString(NEWS_CATEGORY);
-            Toast.makeText(getActivity(),newsCategory,Toast.LENGTH_LONG).show();
-		}
 	}
 
 	/** Create the fragment UI view */
@@ -98,14 +72,15 @@ public class TopStoriesFragment
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 		// Inflate UI view for the fragment
-        View rootView = inflater.inflate(R.layout.activity_news, container, false); // think about layout
+		final View rootView = inflater.inflate(R.layout.activity_news, container, false); // think about layout
 		Timber.d("Start getting news data");
 		// Get a reference to the recycler view
         recyclerView = rootView.findViewById(R.id.recycler_view);
+
 		// Set layout for recycler view
 		recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		recyclerView.setHasFixedSize(true);
-        adapter = new NewsAdapter(getContext(), new ArrayList<Articles>());
+
 
 
 		// Get reference to the Progress bar
@@ -133,8 +108,7 @@ public class TopStoriesFragment
 
 				// If there is a network connection, fetch data
 				if (networkInfo != null && networkInfo.isConnected()) {
-                    Toast.makeText(getActivity(),newsCategory.toString(),Toast.LENGTH_LONG).show();
-                    new Communicator().getEveryThingsNews(newsCategory);
+                    new Communicator().getTopHeadlines("us");
 				} else {
 					// Otherwise, display error
 					// First, hide loading indicator so error message will be visible
@@ -150,8 +124,7 @@ public class TopStoriesFragment
 		return rootView;
 	}
 	@Subscribe
-	public void onNewsServerEvent(NewsServerEvent event) {
-
+	public void onHeadlinesServerEvent(HeadlinesServerEvent event) {
 
 		if (event.getServerResponse().getArticlesResponse()!=null) {
 			News news=event.getServerResponse();
@@ -162,7 +135,7 @@ public class TopStoriesFragment
 				adapter = new NewsAdapter(getContext(), result);
                 // Set adapter for recycler view
                 recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+				adapter.notifyDataSetChanged();
                 progressSpinner.setVisibility(View.GONE);
 
 			}
